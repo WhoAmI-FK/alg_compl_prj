@@ -36,9 +36,10 @@ namespace __sorting {
 			// exception handling
 			break;
 		}
+		print(a);
 	}
 
-	void print(std::vector<int>& a)
+	void Sorter::print(std::vector<int>& a)
 	{
 		std::cout << "\n-----------------------------------------\n";
 		for (const auto& v : a)
@@ -62,15 +63,8 @@ namespace __sorting {
 			while ((temp != a.begin()) && *(temp - 1) > compVal)
 			{
 
-#ifdef DEBUG
-				print(a);
-#endif // DEBUG
-
 				std::swap(*temp , *(temp - 1));
 				temp--;
-#ifdef DEBUG
-				print(a);
-#endif // DEBUG
 
 			}
 			*(temp) = compVal;
@@ -91,12 +85,6 @@ namespace __sorting {
 		if(a[middle]>a[middle+1])
 		helperMergeArray(a, left, right);
 
-	/*	for (const auto& v : a)
-		{
-			std::cout << v << " ";
-		}
-		std::cout << std::endl;
-	*/
 	}
 	
 	void Sorter::helperMergeArray(std::vector<int>& a, std::size_t leftStart, std::size_t rightEnd)
@@ -192,57 +180,87 @@ namespace __sorting {
 		}
 
 		quickSort(a, 0, a.size()-1);
-		for (const auto& v : a)
-		{
-			std::cout << v << " ";
-		}
 	}
 
 
 
 	void Sorter::heapSort(std::vector<int>& a)
 	{
-
-		class HeapF {
-		public:
-			HeapF()
-			{
-				top = 0;
-
-			}
-
-
-			int getParent(int pos, int maxIndex)
-			{
-				pos = (pos - 1) / 2;
-				if (pos < 0)
-				{
-					//
-				}
-
-				return pos;
-			}
-
-			void heapify(std::vector<int>& a)
-			{
-
-			}
-
+		class Heap {
 		private:
-			void helperPrint(std::vector<int>& a)
+			static void heapify(std::vector<int>& a)
 			{
-				std::cout << "\n------------------------\n";
-				for (auto& v : a)
-				{
-					std::cout << v << " ";
-				}
-				std::cout << "\n------------------------\n\n";
+				int lastParent = getParent(a.size() - 1);
 
+
+				while (lastParent >= 0)
+				{
+					fixHeap(a,lastParent, a.size() - 1);
+					lastParent--;
+				}
 			}
 
-			std::int64_t top;
+			static void removeTop(std::vector<int>& a, int& end)
+			{
+				std::swap(a[0], a[end]);
+				end--;
+			}
+
+			static inline void fixHeap(std::vector<int>& a, int start, int end)
+			{
+				int lastParent = start;
+
+				while (getLeftChild(lastParent) <= end)
+				{
+					int leftChild = getLeftChild(lastParent);
+					int maxSwap = lastParent;
+					if (a[maxSwap] < a[leftChild])
+					{
+						maxSwap = leftChild;
+					}
+					if (leftChild + 1 <= end)
+					{
+						maxSwap = a[maxSwap] < a[leftChild + 1] ? leftChild + 1 : maxSwap;
+					}
+
+					if (maxSwap == lastParent)
+					{
+						return; // root holds the largest element
+					}
+
+					std::swap(a[lastParent], a[maxSwap]);
+					lastParent = maxSwap;
+				}
+			}
+
+			static int getParent(const int& pos)
+			{
+				int returnVal = (pos - 1) / 2;
+				return returnVal >= 0 ? returnVal : 0;
+			}
+
+			static int getLeftChild(const int& parentPos)
+			{
+				return 2 * parentPos + 1;
+			}
+
+		public:
+			static void heapSort(std::vector<int>& a) {
+				if (a.size() <= 1)
+				{
+					return;
+				}
+
+				heapify(a);
+
+				int end = a.size() - 1;
+				while (end > 0)
+				{
+					removeTop(a, end);
+					fixHeap(a,0, end);
+				}
+			}
 		};
-		HeapF instance;
-//		instance.buildHeap(a);
+
 	}
 }
