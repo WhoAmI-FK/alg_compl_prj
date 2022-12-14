@@ -36,7 +36,6 @@ namespace __sorting {
 			// exception handling
 			break;
 		}
-		print(a);
 	}
 
 	void Sorter::print(std::vector<int>& a)
@@ -62,8 +61,8 @@ namespace __sorting {
 			auto temp = t;
 			while ((temp != a.begin()) && *(temp - 1) > compVal)
 			{
-
-				std::swap(*temp , *(temp - 1));
+				*temp = *(temp - 1);
+				//std::swap(*temp , *(temp - 1));
 				temp--;
 
 			}
@@ -130,10 +129,6 @@ namespace __sorting {
 			return;
 		}
 		mergeSort(a, 0, a.size()-1);
-		for (const auto& v : a)
-		{
-			std::cout << v << " ";
-		}
 	}
 
 	void Sorter::quickSort(std::vector<int>& a, int left, int right)
@@ -261,6 +256,6 @@ namespace __sorting {
 				}
 			}
 		};
-
+		Heap::heapSort(a);
 	}
 }
