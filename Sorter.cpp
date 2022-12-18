@@ -1,14 +1,9 @@
 #include "Sorter.h"
-
 #include <cstdint>
-
-#ifdef DEBUG
 #include <iostream>
-#endif
+#include <stdexcept>
 
 namespace __sorting {
-
-
 
 	SorterIf& SorterIf::get()
 	{
@@ -32,14 +27,12 @@ namespace __sorting {
 		case SortingTypes::HEAP_SORT:
 			heapSort(a);
 			break;
-		default:
-			// exception handling
-			break;
 		}
 	}
 
 	void Sorter::print(std::vector<int>& a)
 	{
+
 		std::cout << "\n-----------------------------------------\n";
 		for (const auto& v : a)
 		{
@@ -55,18 +48,16 @@ namespace __sorting {
 			return;
 		}
 
-		for (auto t = a.begin() + 1; t != a.end(); t++)
+		for (std::size_t i = 1; i < a.size(); i++)
 		{
-			int compVal = *t;
-			auto temp = t;
-			while ((temp != a.begin()) && *(temp - 1) > compVal)
+			int val = a[i];
+			int cur = i;
+			while ((cur > 0) && a[cur-1] > val)
 			{
-				*temp = *(temp - 1);
-				//std::swap(*temp , *(temp - 1));
-				temp--;
-
+				a[cur] = a[cur-1];
+				cur--;
 			}
-			*(temp) = compVal;
+			a[cur] = val;
 		}
 	}
 
@@ -81,24 +72,24 @@ namespace __sorting {
 		mergeSort(a, left, middle);
 		mergeSort(a, middle + 1, right);
 
-		if(a[middle]>a[middle+1])
-		helperMergeArray(a, left, right);
+		if (a[middle] > a[middle + 1])
+			helperMergeArray(a, left, right);
 
 	}
-	
+
 	void Sorter::helperMergeArray(std::vector<int>& a, std::size_t leftStart, std::size_t rightEnd)
 	{
 		std::size_t leftEnd = (leftStart + rightEnd) / 2;
 		std::size_t rightStart = leftEnd + 1;
 		std::size_t left = leftStart;
 		std::vector<int> output;
-		output.resize(rightEnd - leftStart+1);
+		output.resize(rightEnd - leftStart + 1);
 		std::size_t index = 0;
-		while(left <= leftEnd && rightStart <=rightEnd )
+		while (left <= leftEnd && rightStart <= rightEnd)
 		{
 			if (a[left] <= a[rightStart])
 			{
-				output[index]=a[left];
+				output[index] = a[left];
 				left++;
 			}
 			else {
@@ -116,7 +107,7 @@ namespace __sorting {
 			output[index++] = a[i];
 		}
 
-		for (std::size_t i = leftStart, j =0; i <= rightEnd; i++,j++)
+		for (std::size_t i = leftStart, j = 0; i <= rightEnd; i++, j++)
 		{
 			a[i] = output[j];
 		}
@@ -128,44 +119,45 @@ namespace __sorting {
 		{
 			return;
 		}
-		mergeSort(a, 0, a.size()-1);
+		mergeSort(a, 0, a.size() - 1);
 	}
 
+	
 	void Sorter::quickSort(std::vector<int>& a, int left, int right)
 	{
-		if (left < right && left>=0 && right>=0)
-		{
-			std::size_t pivot = hoaresPartition(a, left, right);
+		if (left < right) {
+			int pivot = hoaresPartition(a, left, right);
 			quickSort(a, left, pivot - 1);
 			quickSort(a, pivot + 1, right);
 		}
-
 	}
 
-	std::size_t Sorter::hoaresPartition(std::vector<int>&a, int left, int right)
+	int Sorter::hoaresPartition(std::vector<int>& a, int left, int right)
 	{
-		std::size_t pivot = left++;
-
-		while (left <= right && right > pivot)
-		{
-
-			if(a[left] <= a[pivot])
+			int border = right;
+			int& pivot = a[left];
+			while (left < right)
 			{
 				left++;
-			}
-			else if (a[right] > a[pivot])
-			{
-				right--;
-			}
-			else {
-				std::swap(a[right], a[left]);
-			}
-		}
-		std::swap(a[pivot], a[right]);
-		return right;
+				while (left <= right && a[left] < pivot)
+				{
+					left++;
+				}
 
-		
+				while (right >= left && a[right] > pivot)
+				{
+					right--;
+				}
+				if (left <= border && left < right)
+				{
+					std::swap(a[left], a[right]);
+				}
+			}
+
+			std::swap(pivot, a[right]);
+			return right;
 	}
+	
 
 	void Sorter::quickSort(std::vector<int>& a)
 	{
@@ -174,9 +166,8 @@ namespace __sorting {
 			return;
 		}
 
-		quickSort(a, 0, a.size()-1);
+		quickSort(a, 0, a.size() - 1);
 	}
-
 
 
 	void Sorter::heapSort(std::vector<int>& a)
@@ -190,7 +181,7 @@ namespace __sorting {
 
 				while (lastParent >= 0)
 				{
-					fixHeap(a,lastParent, a.size() - 1);
+					fixHeap(a, lastParent, a.size() - 1);
 					lastParent--;
 				}
 			}
@@ -252,7 +243,7 @@ namespace __sorting {
 				while (end > 0)
 				{
 					removeTop(a, end);
-					fixHeap(a,0, end);
+					fixHeap(a, 0, end);
 				}
 			}
 		};

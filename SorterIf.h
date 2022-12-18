@@ -6,7 +6,8 @@ namespace __sorting {
 		INSERTION_SORT = 0,
 		QUICK_SORT,
 		MERGE_SORT,
-		HEAP_SORT
+		HEAP_SORT,
+		HYBRID_SORT
 	};
 
 

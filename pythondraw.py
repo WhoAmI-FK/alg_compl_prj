@@ -11,15 +11,31 @@ with open("./results.txt") as fd:
 
 size, insert, merge, quick, heap = ds
 
-#plt.plot(size, insert)
+plt.title("Overview of perfomance")
+plt.plot(size, insert, label="insertionsort")
 plt.plot(size, merge, label='mergesort')
-plt.plot(size, quick, label='quick')
+plt.plot(size, quick, label='quicksort')
 plt.plot(size, heap, label='heapsort')
 plt.xlabel('array size')
 plt.ylabel('time (in nanoseconds)')
 plt.legend()
-#print("merge: ",merge)
-#print("insert: ", insert)
-#print("quick: ", quick)
-#print("heap: ", heap)
-plt.savefig("pic.png")
+plt.savefig("overview.png")
+
+plt.clf()
+plt.title("Perfomance without insertionsort")
+plt.plot(size, merge, label='mergesort')
+plt.plot(size, quick, label='quicksort')
+plt.plot(size, heap, label='heapsort')
+plt.xlabel('array size')
+plt.ylabel('time (in nanoseconds)')
+plt.legend()
+plt.savefig("ovnoins.png");
+
+plt.clf()
+plt.title("Comparison merge and heap sorts")
+plt.plot(size, merge, label='mergesort')
+plt.plot(size, heap, label='heapsort')
+plt.xlabel('array size')
+plt.ylabel('time (in nanoseconds)')
+plt.legend()
+plt.savefig("ovmerheap.png");

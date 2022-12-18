@@ -2,33 +2,31 @@
 #include "SorterIf.h"
 #include "Sorter.h"
 #include "TimerAPI.h"
+#include "DataContainer.h"
 #include <random>
 #include <cassert>
 #include <algorithm>
+#include <limits>
 
-constexpr int step = 10;
-constexpr int maxlen = 100;
-constexpr int times = 10;
+#ifdef DEBUG
+#define DEBUG_POINT(VAR) std::cout << VAR << std::endl;  
+#endif
+
+
+constexpr int step = 100;
+constexpr int maxlen = 10000;
+constexpr int times = 100;
 
 int main()
 {
-/*	std::vector<int> v = {7, 3, 1, 2, 4, 6};
-
-	(__sorting::SorterIf::get()).sort(v, __sorting::SortingTypes::INSERTION_SORT);
-*/
-
-//	std::vector<int> v2 = { 7, 3, 1,1000,-1000,11,111111,1000,0,0,0,0,1,1,1,1, 2, 4, 6};
-//	(__sorting::SorterIf::get()).sort(v2, __sorting::SortingTypes::QUICK_SORT);
-	
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	__sorting::Sorter s;
-	for (int len = step; len < maxlen; len += step) {
-		std::chrono::nanoseconds INS(0);
-		std::chrono::nanoseconds QUI(0);
-		std::chrono::nanoseconds MER(0);
-		std::chrono::nanoseconds HEP(0);
+	std::vector<DataContainer> collectedData;
+	for (int len = step; len <= maxlen; len += step) {
 
+		DataContainer sorts;
+		sorts.init();
+		sorts.len = len;
 		std::vector<int> original(len);
 		for (int i = 0; i < len; i++)
 		{
@@ -37,28 +35,44 @@ int main()
 
 		std::vector<int> arr;
 		std::vector<int> sorted;
-
 		for (int t = 0; t < times; t++)
 		{
+
 			std::shuffle(original.begin(), original.end(), gen);
 
-			INS += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::INSERTION_SORT);
+			sorts.INS += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::INSERTION_SORT);
 
-			MER += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::MERGE_SORT);
+			sorts.MER += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::MERGE_SORT);
 
-			QUI += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::QUICK_SORT);
+			sorts.QUI += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::QUICK_SORT);
+		
+			sorts.HEP += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::HEAP_SORT);
 
-			HEP += __time::TimerAPI::get().estimateTime(original, arr, __sorting::SortingTypes::HEAP_SORT);
+//			sorts.INS_B += __time::TimerAPI::get().estimateTime(arr, sorted, __sorting::SortingTypes::INSERTION_SORT);
+
+//			sorts.MER_B += __time::TimerAPI::get().estimateTime(arr, sorted, __sorting::SortingTypes::MERGE_SORT);
+
+//			sorts.QUI_B += __time::TimerAPI::get().estimateTime(arr, sorted, __sorting::SortingTypes::QUICK_SORT);
+
+//			sorts.HEP_B += __time::TimerAPI::get().estimateTime(arr, sorted, __sorting::SortingTypes::HEAP_SORT);
 		}
 		
 		std::cout
 			<< len << " "
-			<< INS.count() / times << " "
-			<< MER.count() / times << " "
-			<< QUI.count() / times << " "
-			<< HEP.count() / times << " "
+			<< sorts.INS.count() / times << " "
+			<< sorts.MER.count() / times << " "
+			<< sorts.QUI.count() / times << " "
+			<< sorts.HEP.count() / times << " "
+//			<< sorts.INS_B.count() / times << " "
+//			<< sorts.MER_B.count() / times << " "
+//			<< sorts.QUI_B.count() / times << " "
+//			<< sorts.HEP_B.count() / times << " "
 			<< std::endl;
 
+		collectedData.push_back(sorts);
 	}
+
+	DataContainer::outputDataToFile(collectedData, times, SortType::NORMAL);
+//	DataContainer::outputDataToFile(collectedData, times, SortType::SORTED);
 	return 0;
 }
